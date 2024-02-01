@@ -112,6 +112,45 @@ func pointer(){
 
 }
 
+// Arrays and Slices
+func array(){
+	names := [5]string{"jason","tina","foo"}
+	names[3] = "hi";
+	names[4] = "ho"
+	// names[5] = "hii";  0,1,..4까지 5개까지만 쓸 수 있다. 초기화 할 때 5개의 요소가 있는 배열만 하기로 이미 정했다.
+	fmt.Println(names)
+}
+
+func slice(){
+	// slice는 배열의 길이를 정하지 않고 사용할 수 있다.
+	names := []string{"jason"}
+	names = append(names, "tina") // 새로운 배열을 반환한다. 
+	fmt.Println(names)
+}
+
+// Maps
+func mapFunc(){
+	jason := map[string]string{"name": "jason", "age": "31"}
+	fmt.Println(jason)
+
+	for key, value := range jason {
+		fmt.Println(key, value)
+	}
+}
+
+// Structs
+type person struct {
+	name string
+	age int
+	favFood []string
+}
+
+func structFunc(){
+	favFood := []string{"kimchi", "ramen"};
+	jason := person{name: "jason", age: 31, favFood: favFood}
+	fmt.Println(jason)
+}
+
 func main(){
-	pointer()
+	structFunc()
 }
