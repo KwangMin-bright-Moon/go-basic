@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	accounts "github.com/KwangMin-bright-Moon/learngo/banking"
 )
 
 func add(a int, b int) int {
@@ -151,6 +153,15 @@ func structFunc(){
 	fmt.Println(jason)
 }
 
+
 func main(){
-	structFunc()
+	accounts := accounts.NewAccount("jason");
+	accounts.Deposit(10)
+	fmt.Println(accounts.Balance())
+	err := accounts.Withdraw(20)
+	if err != nil {
+		// log.Fatalln(err) 이렇게 하면 프로그램을 종료 시킨다.
+		fmt.Println(err)
+	}
+	fmt.Println(accounts.Balance())
 }
