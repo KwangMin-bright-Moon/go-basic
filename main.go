@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	accounts "github.com/KwangMin-bright-Moon/learngo/banking"
+	"github.com/KwangMin-bright-Moon/learngo/mydict"
 )
 
 func add(a int, b int) int {
@@ -155,13 +155,15 @@ func structFunc(){
 
 
 func main(){
-	accounts := accounts.NewAccount("jason");
-	accounts.Deposit(10)
-	fmt.Println(accounts.Balance())
-	err := accounts.Withdraw(20)
+	dictionary := mydict.Dictionary{};
+	dictionary.Add("first","First word!")
+	test1, _ := dictionary.Search("first");
+	fmt.Println(test1)
+	dictionary.Delete("first")
+	test2, err := dictionary.Search("first")
 	if err != nil {
-		// log.Fatalln(err) 이렇게 하면 프로그램을 종료 시킨다.
 		fmt.Println(err)
+	}else{
+		fmt.Println(test2)
 	}
-	fmt.Println(accounts.Balance())
 }
