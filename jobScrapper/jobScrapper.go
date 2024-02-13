@@ -1,4 +1,4 @@
-package main
+package jobscrapper
 
 import (
 	"encoding/csv"
@@ -19,15 +19,16 @@ type extractedJob struct {
 	summary string
 }
 
-var baseUrl string = "https://www.saramin.co.kr/zf_user/search/recruit?&searchword=python"
 
-func main(){
+// Scrape Saramin by a term
+func Scrape(term string){
+	var baseUrl string = "https://www.saramin.co.kr/zf_user/search/recruit?&searchword=" + term
 	var jobs []extractedJob
 	c := make(chan []extractedJob)
-	totalPages := getPages()
+	totalPages := getPages(baseUrl)
 	
 	for i := 0; i < totalPages; i++ {
-		go getPage(i, c)
+		go getPage(i, baseUrl, c)
 	}
 
 	for i := 0; i < totalPages; i++ {
@@ -42,10 +43,10 @@ func main(){
 
 
 
-func getPage(page int, mainC chan <- []extractedJob ) {
+func getPage(page int, url string, mainC chan <- []extractedJob ) {
 var jobs []extractedJob
 c := make(chan extractedJob)
- pageURL := baseUrl + "&ecruitPage=" + strconv.Itoa(page + 1)
+ pageURL := url + "&ecruitPage=" + strconv.Itoa(page + 1)
  fmt.Println("Requesting", pageURL)
 
  res, err := http.Get(pageURL)
@@ -71,9 +72,9 @@ for i := 0; i < searchCards.Length(); i++ {
 
 func extractJob(card *goquery.Selection, c chan <- extractedJob){
 	id, _ := card.Attr("value")
-	title := cleanString(card.Find(".job_tit>a>span").Text())
-	location := cleanString(card.Find(".job_condition>span>a").Text())
-	summary := cleanString(card.Find(".job_sector>a").Text())
+	title := CleanString(card.Find(".job_tit>a>span").Text())
+	location := CleanString(card.Find(".job_condition>span>a").Text())
+	summary := CleanString(card.Find(".job_sector>a").Text())
 
 	c <- extractedJob{
 		id: id,
@@ -83,13 +84,14 @@ func extractJob(card *goquery.Selection, c chan <- extractedJob){
 	}
 }
 
-func cleanString(str string) string {
+// Clean string
+func CleanString(str string) string {
 	return strings.Join(strings.Fields(strings.TrimSpace((str)))," ")
 }
 
-func getPages() int {
+func getPages(url string) int {
 	pages := 0
-	res, err := http.Get(baseUrl)
+	res, err := http.Get(url)
 	checkErr(err)
 	checkCode(res)
 

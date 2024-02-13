@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
-	"github.com/KwangMin-bright-Moon/learngo/mydict"
+	jobscrapper "github.com/KwangMin-bright-Moon/learngo/jobScrapper"
+	"github.com/labstack/echo"
 )
 
 func add(a int, b int) int {
@@ -154,16 +156,22 @@ func structFunc(){
 }
 
 
+func handleHome(c echo.Context) error {
+	return c.File("home.html")
+}
+const FILE_NAME string = "jobs.csv"
+
+func handleScrape(c echo.Context) error {
+	defer os.Remove(FILE_NAME)
+	term := strings.ToLower(jobscrapper.CleanString(c.FormValue("term")))
+	jobscrapper.Scrape(term)
+	return c.Attachment(FILE_NAME, FILE_NAME)
+}
+
+
 func main(){
-	dictionary := mydict.Dictionary{};
-	dictionary.Add("first","First word!")
-	test1, _ := dictionary.Search("first");
-	fmt.Println(test1)
-	dictionary.Delete("first")
-	test2, err := dictionary.Search("first")
-	if err != nil {
-		fmt.Println(err)
-	}else{
-		fmt.Println(test2)
-	}
+	e := echo.New()
+	e.GET("/",handleHome)
+	e.POST("/scrape", handleScrape)
+	e.Logger.Fatal(e.Start(":1323"))
 }
